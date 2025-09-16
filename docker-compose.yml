@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    container_name: adonis_app
+    ports:
+      - "3333:3333"
+    environment:
+      NODE_ENV: production
+      DB_CONNECTION: pg
+      PG_HOST: your-rds-endpoint.amazonaws.com
+      PG_PORT: 5432
+      PG_USER: adonis
+      PG_PASSWORD: secret
+      PG_DB_NAME: adonis_db
