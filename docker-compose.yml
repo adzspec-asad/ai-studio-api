@@ -5,7 +5,7 @@ services:
     build:
       context: .
       target: production
-    container_name: adonis_app
+    container_name: adonis_app_prod
     ports:
       - "3333:3333"
     environment:
@@ -16,3 +16,18 @@ services:
       PG_USER: adonis
       PG_PASSWORD: secret
       PG_DB_NAME: adonis_db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s  # Give app 60s to start before checking
+      start_interval: 5s # Check every 5s during start period
+    # Add production-specific optimizations
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M

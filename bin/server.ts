@@ -26,6 +26,15 @@ const IMPORTER = (filePath: string) => {
   if (filePath.startsWith('./') || filePath.startsWith('../')) {
     return import(new URL(filePath, APP_ROOT).href)
   }
+
+  if (!filePath.includes(':')) {
+    try {
+      return import(new URL(`./${filePath}`, APP_ROOT).href)
+    } catch (error) {
+      return import(filePath)
+    }
+  }
+
   return import(filePath)
 }
 
