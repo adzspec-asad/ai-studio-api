@@ -15,7 +15,7 @@ export default class SystemUserAuthController {
       const user = await SystemUserModel.verifyCredentials(email, password)
 
       // Create an access token for the user
-      const token = await auth.use('system-user').createToken(user, ['*'], {
+      const token = await auth.use('system_user').createToken(user, ['*'], {
         name: 'System User Login Token',
         expiresIn: '24 hours'
       })

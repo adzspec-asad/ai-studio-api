@@ -4,7 +4,7 @@ This document describes the authentication system for system users (superadmin, 
 
 ## Overview
 
-The system uses access tokens for authentication, which are suitable for API-based authentication. The authentication is handled by the `SystemUserAuthController` and uses the `system-user` guard configured in `config/auth.ts`.
+The system uses access tokens for authentication, which are suitable for API-based authentication. The authentication is handled by the `SystemUserAuthController` and uses the `system_user` guard configured in `config/auth.ts`.
 
 ## API Endpoints
 

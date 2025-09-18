@@ -36,5 +36,5 @@ router.group(() => {
     router.get('/tokens', [SystemUserAuthController, 'tokens'])
     router.post('/tokens', [SystemUserAuthController, 'createToken'])
     router.delete('/tokens/:tokenId', [SystemUserAuthController, 'deleteToken'])
-  }).use(middleware.auth({ guards: ['system-user'] }))
+  }).use(middleware.auth({ guards: ['system_user'] }))
 }).prefix('/api/system/auth')
