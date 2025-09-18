@@ -27,5 +27,25 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PORT: Env.schema.number(),
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
-  DB_DATABASE: Env.schema.string()
+  DB_DATABASE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring master database connection
+  |----------------------------------------------------------
+  */
+  MASTER_DB_HOST: Env.schema.string({ format: 'host' }),
+  MASTER_DB_PORT: Env.schema.number(),
+  MASTER_DB_USER: Env.schema.string(),
+  MASTER_DB_PASSWORD: Env.schema.string.optional(),
+  MASTER_DB_DATABASE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for superadmin user seeding
+  |----------------------------------------------------------
+  */
+  SUPERADMIN_EMAIL: Env.schema.string.optional(),
+  SUPERADMIN_PASSWORD: Env.schema.string.optional(),
+  SUPERADMIN_NAME: Env.schema.string.optional()
 })
