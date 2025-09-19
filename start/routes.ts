@@ -10,6 +10,7 @@
 import router from '@adonisjs/core/services/router'
 import HealthController from '#controllers/http/api/health_controller'
 import SystemUserAuthController from '#controllers/http/api/system_user_auth_controller'
+import TenantController from '#controllers/http/api/tenant_controller'
 import { middleware } from '#start/kernel'
 router.get('/', async () => {
   return {
@@ -38,3 +39,12 @@ router.group(() => {
     router.delete('/tokens/:tokenId', [SystemUserAuthController, 'deleteToken'])
   }).use(middleware.auth({ guards: ['system_user'] }))
 }).prefix('/api/system/auth')
+
+// Tenant Management routes (protected - requires authentication)
+router.group(() => {
+  router.get('/tenants', [TenantController, 'index'])
+  router.post('/tenants', [TenantController, 'create'])
+  router.get('/tenants/:slug', [TenantController, 'show'])
+  router.put('/tenants/:slug', [TenantController, 'update'])
+  router.delete('/tenants/:slug', [TenantController, 'destroy'])
+}).prefix('/api/system').use(middleware.auth({ guards: ['system_user'] }))

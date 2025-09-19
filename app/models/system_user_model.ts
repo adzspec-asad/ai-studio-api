@@ -10,6 +10,9 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 })
 
 export default class SystemUserModel extends AuthFinder(BaseModel) {
+  public static table = 'system_users'
+  public static connection = 'master' // Use master database connection
+
   @column({ isPrimary: true })
   public id!: string
 

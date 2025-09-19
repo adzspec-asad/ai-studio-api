@@ -3,6 +3,7 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class TenantModel extends BaseModel {
 
+    public static table = 'tenants'
     public static connection = 'master' // Always use master DB
   
     @column({ isPrimary: true })

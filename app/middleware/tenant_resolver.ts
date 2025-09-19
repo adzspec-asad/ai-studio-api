@@ -4,14 +4,42 @@ import type { NextFn } from '@adonisjs/core/types/http'
 import db from '@adonisjs/lucid/services/db'
 
 export default class TenantResolver {
+  /**
+   * Routes that should skip tenant resolution
+   */
+  private skipTenantRoutes = [
+    '/health',
+    '/health/liveness',
+    '/health/readiness',
+    '/api/system/auth/*', // System user auth routes
+    '/api/system/tenants/*', // Tenant management routes
+    '/' // Root route
+  ]
+
   public async handle({ request }: HttpContext, next: NextFn) {
+    const url = request.url()
+    const pathname = new URL(url, 'http://localhost').pathname
+
+    // Skip tenant resolution for system routes
+    if (this.shouldSkipTenantResolution(pathname)) {
+      console.log(`🔄 Skipping tenant resolution for system route: ${pathname}`)
+      return next()
+    }
+
+    console.log(`🏢 Resolving tenant for route: ${pathname}`)
+
     // 👇 You can choose to resolve by subdomain or header
-    const tenantSlug = request.header('x-tenant') 
+    const tenantSlug = request.header('x-tenant')
       || request.subdomains()[0] // e.g., acme.my-ai-studio.com → "acme"
 
     if (!tenantSlug) {
-      throw new Error('Tenant not specified')
+      console.log(`❌ No tenant specified for route: ${pathname}`)
+      console.log(`   - x-tenant header: ${request.header('x-tenant') || 'not provided'}`)
+      console.log(`   - subdomains: ${JSON.stringify(request.subdomains())}`)
+      throw new Error('Tenant not specified. Please provide tenant via x-tenant header or subdomain.')
     }
+
+    console.log(`✅ Resolved tenant: ${tenantSlug} for route: ${pathname}`)
 
     // 🔎 Look up tenant in master DB
     const tenant = await Tenant.query({ connection: 'master' })
@@ -57,5 +85,30 @@ export default class TenantResolver {
 
     // 🟢 Continue request
     await next()
+  }
+
+  /**
+   * Check if the current route should skip tenant resolution
+   */
+  private shouldSkipTenantResolution(pathname: string): boolean {
+    return this.skipTenantRoutes.some(route => {
+      // Handle wildcard patterns (e.g., /api/system/auth/* matches /api/system/auth/login)
+      if (route.endsWith('/*')) {
+        const baseRoute = route.slice(0, -2) // Remove '/*'
+        return pathname.startsWith(baseRoute)
+      }
+
+      // Exact match
+      if (pathname === route) {
+        return true
+      }
+
+      // Legacy prefix match for API routes without wildcards
+      if (route.startsWith('/api/') && !route.includes('*') && pathname.startsWith(route)) {
+        return true
+      }
+
+      return false
+    })
   }
 }

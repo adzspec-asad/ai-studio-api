@@ -11,7 +11,7 @@ export default class SystemUserAuthController {
       // Validate the request data
       const { email, password } = await request.validateUsing(loginValidator)
 
-      // Verify user credentials
+      // Verify user credentials using master database connection
       const user = await SystemUserModel.verifyCredentials(email, password)
 
       // Create an access token for the user
